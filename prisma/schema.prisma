@@ -14,8 +14,27 @@ model User {
   email    String @unique
   password String
 
+  ProfileInfo ProfileInfo?
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
+}
+
+model ProfileInfo {
+  id String @id @default(uuid())
+
+  name      String
+  avatarUrl String? @map("avatar_url")
+  aboutMe   String?
+  birthday  String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("profile_infos")
 }
