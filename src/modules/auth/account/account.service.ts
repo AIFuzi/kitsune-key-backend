@@ -1,11 +1,36 @@
-import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { hash } from 'argon2'
+
+import { ConflictException, Injectable } from '@nestjs/common'
+import { PrismaService } from '@/src/core/prisma/prisma.service'
+import { CreateAccountDto } from '@/src/modules/auth/account/dto'
 
 @Injectable()
 export class AccountService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   me() {
     return { message: 'me' }
+  }
+
+  async create(dto: CreateAccountDto) {
+    const { email, password } = dto
+
+    const isExistUser = await this.prismaService.user.findUnique({
+      where: {
+        email,
+      },
+    })
+    if (isExistUser) {
+      throw new ConflictException('User already exists')
+    }
+
+    const hashedPassword = await hash(password)
+
+    return this.prismaService.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+      },
+    })
   }
 }
