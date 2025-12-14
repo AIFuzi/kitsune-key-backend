@@ -25,9 +25,23 @@ services:
     networks:
       - kitsune-key
 
+  redisinsight:
+    image: redis/redisinsight
+    container_name: redisinsight
+    restart: unless-stopped
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight:/data
+    depends_on:
+      - redis
+    networks:
+      - kitsune-key
+
 volumes:
   postgres_data:
   redis_data:
+  redisinsight:
 
 networks:
   kitsune-key:
