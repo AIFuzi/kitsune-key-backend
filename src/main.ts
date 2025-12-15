@@ -1,4 +1,4 @@
-import { RedisStore } from 'connect-redis'
+import RedisStore from 'connect-redis'
 import * as session from 'express-session'
 
 import { ValidationPipe } from '@nestjs/common'
