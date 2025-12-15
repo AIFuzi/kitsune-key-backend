@@ -11,8 +11,10 @@ datasource db {
 model User {
   id String @id @default(uuid())
 
-  email    String @unique
-  password String
+  email         String  @unique
+  password      String
+  isTotpEnabled Boolean @default(false) @map("is_totp_enabled")
+  totpSecret    String? @map("totp_secret")
 
   ProfileInfo ProfileInfo?
 
