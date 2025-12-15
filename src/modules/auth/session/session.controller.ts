@@ -18,4 +18,9 @@ export class SessionController {
   ) {
     return this.sessionService.login(req, dto, userAgent)
   }
+
+  @Post('logout')
+  async logout(@Req() req: Request) {
+    return this.sessionService.logout(req)
+  }
 }
