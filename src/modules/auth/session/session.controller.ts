@@ -1,6 +1,6 @@
 import type { Request } from 'express'
 
-import { Body, Controller, Post, Req } from '@nestjs/common'
+import { Body, Controller, Get, Post, Req } from '@nestjs/common'
 import { LoginUserDto } from '@/src/modules/auth/session/dto'
 import { UserAgent } from '@/src/shared/decorators'
 
@@ -22,5 +22,10 @@ export class SessionController {
   @Post('logout')
   async logout(@Req() req: Request) {
     return this.sessionService.logout(req)
+  }
+
+  @Get()
+  async getSessionsByUser(@Req() req: Request) {
+    return this.sessionService.findSessionsByUser(req)
   }
 }

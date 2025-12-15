@@ -10,7 +10,11 @@ import { ConfigService } from '@nestjs/config'
 import { PrismaService } from '@/src/core/prisma/prisma.service'
 import { RedisService } from '@/src/core/redis/redis.service'
 import { LoginUserDto } from '@/src/modules/auth/session/dto'
-import { USER_INVALID_PASSWORD, USER_NOT_FOUND } from '@/src/shared/messages'
+import {
+  SESSION_NOT_FOUND_USER,
+  USER_INVALID_PASSWORD,
+  USER_NOT_FOUND,
+} from '@/src/shared/messages'
 import {
   destroySession,
   getSessionMetadata,
@@ -25,8 +29,35 @@ export class SessionService {
     private readonly configService: ConfigService,
   ) {}
 
+  async findSessionsByUser(req: Request) {
+    const userId = req.session.userId
+
+    if (!userId) {
+      throw new NotFoundException(SESSION_NOT_FOUND_USER)
+    }
+
+    const keys = await this.redisService.keys('*')
+    const userSessions = []
+
+    for (const key of keys) {
+      const sessionData = await this.redisService.get(key)
+
+      if (sessionData) {
+        const session = JSON.parse(sessionData)
+
+        if (session.userId === userId) {
+          userSessions.push({ ...session, id: key.split(':')[1] })
+        }
+      }
+    }
+
+    userSessions.sort((a, b) => b.createdAt - a.createdAt)
+
+    return userSessions.filter(session => session.id !== req.session.id)
+  }
+
   async login(req: Request, dto: LoginUserDto, userAgent: string) {
-    const { email, totp, password } = dto
+    const { email, password } = dto
 
     const user = await this.prismaService.user.findUnique({
       where: {

@@ -4,3 +4,4 @@ export const USER_INVALID_PASSWORD = 'Invalid Password'
 
 export const SESSION_FAILED_CREATE_SESSION = 'Failed to create session'
 export const SESSION_FAILED_DESTROY_SESSION = 'Failed destroy session'
+export const SESSION_NOT_FOUND_USER = 'Not found user in session'
