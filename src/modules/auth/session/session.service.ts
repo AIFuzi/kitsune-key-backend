@@ -3,6 +3,7 @@ import type { Request } from 'express'
 
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -12,6 +13,7 @@ import { PrismaService } from '@/src/core/prisma/prisma.service'
 import { RedisService } from '@/src/core/redis/redis.service'
 import { LoginUserDto } from '@/src/modules/auth/session/dto'
 import {
+  ACCESS_DENIED,
   SESSION_NOT_FOUND,
   SESSION_NOT_FOUND_USER,
   SESSION_REMOVE_CONFLICT,
@@ -98,7 +100,7 @@ export class SessionService {
     await destroySession(req, this.configService)
   }
 
-  async removeSession(req: Request, id: string) {
+  async removeSession(req: Request, id: string, userId: string) {
     if (req.session.id == id) {
       throw new ConflictException(SESSION_REMOVE_CONFLICT)
     }
@@ -107,6 +109,10 @@ export class SessionService {
     const isSessionExist = await this.redisService.get(sessionName)
     if (!isSessionExist) {
       throw new NotFoundException(SESSION_NOT_FOUND)
+    }
+
+    if (req.session.userId !== userId) {
+      throw new ForbiddenException(ACCESS_DENIED)
     }
 
     await this.redisService.del(sessionName)
