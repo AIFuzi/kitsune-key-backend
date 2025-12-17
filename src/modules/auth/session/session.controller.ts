@@ -1,6 +1,6 @@
 import type { Request } from 'express'
 
-import { Body, Controller, Get, Post, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common'
 import { LoginUserDto } from '@/src/modules/auth/session/dto'
 import { UserAgent } from '@/src/shared/decorators'
 
@@ -25,7 +25,17 @@ export class SessionController {
   }
 
   @Get()
-  async getSessionsByUser(@Req() req: Request) {
-    return this.sessionService.findSessionsByUser(req)
+  async getOtherSessionsByUser(@Req() req: Request) {
+    return this.sessionService.findOtherSessionsByUser(req)
+  }
+
+  @Get('current')
+  async getCurrentSession(@Req() req: Request) {
+    return this.sessionService.findCurrentSession(req)
+  }
+
+  @Delete(':id')
+  async removeSession(@Req() req: Request, @Param('id') id: string) {
+    return this.sessionService.removeSession(req, id)
   }
 }

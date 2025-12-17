@@ -2,6 +2,7 @@ import { verify } from 'argon2'
 import type { Request } from 'express'
 
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -11,7 +12,9 @@ import { PrismaService } from '@/src/core/prisma/prisma.service'
 import { RedisService } from '@/src/core/redis/redis.service'
 import { LoginUserDto } from '@/src/modules/auth/session/dto'
 import {
+  SESSION_NOT_FOUND,
   SESSION_NOT_FOUND_USER,
+  SESSION_REMOVE_CONFLICT,
   USER_INVALID_PASSWORD,
   USER_NOT_FOUND,
 } from '@/src/shared/messages'
@@ -29,7 +32,18 @@ export class SessionService {
     private readonly configService: ConfigService,
   ) {}
 
-  async findSessionsByUser(req: Request) {
+  async findCurrentSession(req: Request) {
+    const sessionId = req.session.id
+
+    const sessionName = `${this.configService.getOrThrow<string>('SESSION_FOLDER')}${sessionId}`
+    const sessionData = await this.redisService.get(sessionName)
+
+    const session = JSON.parse(sessionData)
+
+    return { ...session, id: sessionId }
+  }
+
+  async findOtherSessionsByUser(req: Request) {
     const userId = req.session.userId
 
     if (!userId) {
@@ -82,5 +96,21 @@ export class SessionService {
 
   async logout(req: Request) {
     await destroySession(req, this.configService)
+  }
+
+  async removeSession(req: Request, id: string) {
+    if (req.session.id == id) {
+      throw new ConflictException(SESSION_REMOVE_CONFLICT)
+    }
+
+    const sessionName = `${this.configService.getOrThrow<string>('SESSION_FOLDER')}${id}`
+    const isSessionExist = await this.redisService.get(sessionName)
+    if (!isSessionExist) {
+      throw new NotFoundException(SESSION_NOT_FOUND)
+    }
+
+    await this.redisService.del(sessionName)
+
+    return true
   }
 }
