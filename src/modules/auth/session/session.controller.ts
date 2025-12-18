@@ -2,9 +2,7 @@ import type { Request } from 'express'
 
 import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common'
 import { LoginUserDto } from '@/src/modules/auth/session/dto'
-import { UserAgent } from '@/src/shared/decorators'
-import { Authorization } from '@/src/shared/decorators/authorization.decorator'
-import { Authorized } from '@/src/shared/decorators/authorized.decorator'
+import { Authorization, Authorized, UserAgent } from '@/src/shared/decorators'
 
 import { SessionService } from './session.service'
 

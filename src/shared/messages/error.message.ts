@@ -10,3 +10,5 @@ export const SESSION_REMOVE_CONFLICT = 'Current session has been removed'
 export const SESSION_NOT_FOUND = 'Session does not exist'
 
 export const ACCESS_DENIED = 'Access denied'
+
+export const TOTP_INVALID_PIN = 'Invalid pin'
