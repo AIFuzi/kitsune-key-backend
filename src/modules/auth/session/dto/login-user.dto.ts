@@ -1,7 +1,6 @@
 import {
   IsEmail,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   Length,
@@ -18,8 +17,8 @@ export class LoginUserDto {
   @Length(8, 64)
   password: string
 
-  @IsNumber()
+  @IsString()
   @Length(6)
   @IsOptional()
-  totp: number
+  pin: string
 }

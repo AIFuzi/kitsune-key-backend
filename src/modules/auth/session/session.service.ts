@@ -1,7 +1,9 @@
 import { verify } from 'argon2'
 import type { Request } from 'express'
+import { TOTP } from 'otpauth'
 
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -73,7 +75,7 @@ export class SessionService {
   }
 
   async login(req: Request, dto: LoginUserDto, userAgent: string) {
-    const { email, password } = dto
+    const { email, password, pin } = dto
 
     const user = await this.prismaService.user.findUnique({
       where: {
@@ -87,6 +89,25 @@ export class SessionService {
     const isValidPass = await verify(user.password, password)
     if (!isValidPass) {
       throw new UnauthorizedException(USER_INVALID_PASSWORD)
+    }
+
+    if (user.isTotpEnabled) {
+      if (!pin) {
+        return { message: 'Incorrect PIN' }
+      }
+
+      const totp = new TOTP({
+        issuer: this.configService.getOrThrow<string>('TOTP_ISSUER'),
+        secret: user.totpSecret,
+        label: `${user.email}`,
+        digits: 6,
+        algorithm: 'SHA1',
+      })
+
+      const delta = totp.validate({ token: pin })
+      if (delta === null) {
+        throw new BadRequestException()
+      }
     }
 
     const metadata = getSessionMetadata(req, userAgent)
