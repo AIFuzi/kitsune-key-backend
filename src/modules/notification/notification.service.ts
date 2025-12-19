@@ -22,6 +22,9 @@ export class NotificationService {
         userId: user.id,
         isRead: false,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     })
   }
 
