@@ -28,39 +28,51 @@ export class HostVerificationService {
     private readonly roleService: RoleService,
   ) {}
 
-  async createVerificationRequest(user: User) {
-    const isExist = await this.prismaService.hostVefification.findUnique({
-      where: {
-        userId: user.id,
-        verificationStatus: {
-          not: HostVerificationStatusType.REJECT,
-        },
+  async getAllVerificationRequests() {
+    return this.prismaService.hostVefification.findMany({
+      orderBy: {
+        createdAt: 'desc',
       },
     })
-    if (isExist) {
+  }
+
+  async createVerificationRequest(user: User) {
+    const isRequestExist = await this.prismaService.hostVefification.findUnique(
+      {
+        where: {
+          userId: user.id,
+        },
+      },
+    )
+    if (
+      isRequestExist &&
+      isRequestExist.verificationStatus !== HostVerificationStatusType.REJECT
+    ) {
       throw new ConflictException(HOST_CONFLICT)
     }
 
-    //=================================================//
-    //========== НАЧАЛО ЕБАНОГО КОСТЫЛЯ ===============//
-    //=================================================//
+    if (!isRequestExist) {
+      await this.prismaService.hostVefification.create({
+        data: {
+          userId: user.id,
+        },
+      })
+    }
 
-    await this.prismaService.hostVefification.delete({
-      where: {
-        userId: user.id,
-        verificationStatus: HostVerificationStatusType.REJECT,
-      },
-    })
-
-    //=================================================//
-    //========== КОНЕЦ ЕБАНОГО КОСТЫЛЯ ================//
-    //=================================================//
-
-    await this.prismaService.hostVefification.create({
-      data: {
-        userId: user.id,
-      },
-    })
+    if (
+      isRequestExist &&
+      isRequestExist.verificationStatus === HostVerificationStatusType.REJECT
+    ) {
+      await this.prismaService.hostVefification.update({
+        where: {
+          userId: user.id,
+        },
+        data: {
+          verificationStatus: HostVerificationStatusType.PENDING,
+          message: null,
+        },
+      })
+    }
 
     const sendRequestVerificationNotification: CreateNotificationDto = {
       title: 'Request send',
@@ -153,5 +165,13 @@ export class HostVerificationService {
     )
 
     return true
+  }
+
+  async getUserRequestStatus(user: User) {
+    return this.prismaService.hostVefification.findUnique({
+      where: {
+        userId: user.id,
+      },
+    })
   }
 }

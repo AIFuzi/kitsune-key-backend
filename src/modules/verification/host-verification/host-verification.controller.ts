@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put } from '@nestjs/common'
+import { Body, Controller, Get, Post, Put } from '@nestjs/common'
 import {
   ApproveHostDto,
   RejectHostDto,
@@ -13,6 +13,18 @@ export class HostVerificationController {
   constructor(
     private readonly hostVerificationService: HostVerificationService,
   ) {}
+
+  @Get()
+  @Authorization('ADMIN')
+  async getAllVerificationRequests() {
+    return this.hostVerificationService.getAllVerificationRequests()
+  }
+
+  @Get('user')
+  @Authorization()
+  async getUserRequestStatus(@Authorized() user: User) {
+    return this.hostVerificationService.getUserRequestStatus(user)
+  }
 
   @Post()
   @Authorization('USER')
