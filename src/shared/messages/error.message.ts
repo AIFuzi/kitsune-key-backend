@@ -12,3 +12,7 @@ export const SESSION_NOT_FOUND = 'Session does not exist'
 export const ACCESS_DENIED = 'Access denied'
 
 export const TOTP_INVALID_PIN = 'Invalid pin'
+
+export const HOST_CONFLICT = 'Request already exists, please wait'
+export const HOST_APPROVE_CONFLICT = 'User already approved'
+export const HOST_REJECT_CONFLICT = 'User already rejected'
