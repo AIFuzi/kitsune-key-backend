@@ -14,6 +14,6 @@ export class AccountController {
 
   @Post('create')
   async create(@Body() dto: CreateAccountDto) {
-    return await this.accountService.create(dto)
+    return this.accountService.create(dto)
   }
 }
