@@ -6,6 +6,8 @@ import {
   Length,
 } from 'class-validator'
 
+import { UserRoleType } from '@prisma/generated/enums'
+
 export class CreateAccountDto {
   @IsNotEmpty()
   @IsString()
@@ -31,4 +33,8 @@ export class CreateAccountDto {
   @IsString()
   @IsNotEmpty()
   birthday: string
+
+  @IsOptional()
+  @IsString()
+  userRole: UserRoleType
 }

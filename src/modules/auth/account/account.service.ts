@@ -4,6 +4,7 @@ import { ConflictException, Injectable } from '@nestjs/common'
 import { PrismaService } from '@/src/core/prisma/prisma.service'
 import { CreateAccountDto } from '@/src/modules/auth/account/dto'
 import { USER_ALREADY_EXISTS } from '@/src/shared/messages'
+import { UserRoleType } from '@prisma/generated/enums'
 
 @Injectable()
 export class AccountService {
@@ -14,7 +15,7 @@ export class AccountService {
   }
 
   async create(dto: CreateAccountDto) {
-    const { email, password, name, aboutMe, birthday } = dto
+    const { email, password, name, aboutMe, birthday, userRole } = dto
 
     const isExistUser = await this.prismaService.user.findUnique({
       where: {
@@ -31,16 +32,22 @@ export class AccountService {
       data: {
         email,
         password: hashedPassword,
-        ProfileInfo: {
+        profileInfo: {
           create: {
             name,
             aboutMe,
             birthday,
           },
         },
+        userRole: {
+          create: {
+            roleType: userRole ? userRole : UserRoleType.USER,
+          },
+        },
       },
       include: {
-        ProfileInfo: true,
+        profileInfo: true,
+        userRole: true,
       },
     })
   }
