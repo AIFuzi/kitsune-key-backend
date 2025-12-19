@@ -16,12 +16,14 @@ model User {
   isTotpEnabled Boolean @default(false) @map("is_totp_enabled")
   totpSecret    String? @map("totp_secret")
 
-  profileInfo  ProfileInfo?
-  userRole     UserRole[]
-  notification Notification[]
+  profileInfo      ProfileInfo?
+  userRole         UserRole[]
+  notification     Notification[]
+  hostVefification HostVefification?
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+  hostVefificationId String?
 
   @@map("users")
 }
@@ -65,13 +67,28 @@ model Notification {
   description      String
   isRead           Boolean          @default(false) @map("is_read")
 
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String?
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("notifications")
+}
+
+model HostVefification {
+  id String @id @default(uuid())
+
+  verificationStatus HostVerificationStatusType @default(PENDING) @map("verification_status")
+  message            String?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("host_verifications")
 }
 
 enum UserRoleType {
@@ -85,4 +102,10 @@ enum NotificationType {
   SUCCESS
   WARNING
   ERROR
+}
+
+enum HostVerificationStatusType {
+  PENDING
+  APPROVED
+  REJECT
 }
