@@ -95,9 +95,10 @@ model HostVefification {
 model Listing {
   id String @id @default(uuid())
 
-  title       String
-  description String
-  imageUrl    String[] @map("image_urls")
+  title        String
+  description  String
+  imageUrl     String[]     @map("image_urls")
+  propertyType PropertyType @default(APARTAMENT) @map("property_type")
 
   country String
   city    String
@@ -107,8 +108,9 @@ model Listing {
   price           Int
   discountPercent Int @default(0) @map("discount_percent")
 
-  bedCount  Int @default(0) @map("bed_count")
-  bathCount Int @default(0) @map("bath_count")
+  bedCount  Int @default(1) @map("bed_count")
+  bathCount Int @default(1) @map("bath_count")
+  roomCount Int @default(1) @map("room_count")
 
   amenities String[]
 
@@ -168,4 +170,11 @@ enum ListingStatusType {
   PUBLISHED
   REJECT
   BANNED
+}
+
+enum PropertyType {
+  APARTAMENT
+  HOUSE
+  HOTEL
+  ROOM
 }

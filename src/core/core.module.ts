@@ -3,9 +3,11 @@ import { ConfigModule } from '@nestjs/config'
 import { AccountModule } from '@/src/modules/auth/account/account.module'
 import { SessionModule } from '@/src/modules/auth/session/session.module'
 import { TotpModule } from '@/src/modules/auth/totp/totp.module'
+import { ListingModule } from '@/src/modules/listing/listing.module'
 import { NotificationModule } from '@/src/modules/notification/notification.module'
 import { RoleModule } from '@/src/modules/permission/role/role.module'
 import { HostVerificationModule } from '@/src/modules/verification/host-verification/host-verification.module'
+import { ListingVerificationModule } from '@/src/modules/verification/listing-verification/listing-verification.module'
 
 import { PrismaModule } from './prisma/prisma.module'
 import { RedisModule } from './redis/redis.module'
@@ -21,6 +23,8 @@ import { RedisModule } from './redis/redis.module'
     TotpModule,
     RoleModule,
     HostVerificationModule,
+    ListingModule,
+    ListingVerificationModule,
   ],
 })
 export class CoreModule {}
