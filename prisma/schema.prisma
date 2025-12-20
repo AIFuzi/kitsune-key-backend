@@ -114,8 +114,8 @@ model Listing {
 
   amenities String[]
 
-  listingStatus ListingStatusType     @default(PENDING) @map("listing_status")
-  verification  ListingVerification[]
+  listingStatus ListingStatusType    @default(PENDING) @map("listing_status")
+  verification  ListingVerification?
 
   host   User   @relation(fields: [hostId], references: [id], onDelete: Cascade)
   hostId String
@@ -138,7 +138,7 @@ model ListingVerification {
   message            String?
 
   Listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  listingId String
+  listingId String  @unique
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
