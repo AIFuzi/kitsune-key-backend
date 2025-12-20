@@ -1,15 +1,29 @@
-import { Injectable } from '@nestjs/common'
+import { TOTP } from 'otpauth'
+
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { PrismaService } from '@/src/core/prisma/prisma.service'
-import { CreateListingDto } from '@/src/modules/listing/dto'
+import { CreateListingDto, DeleteListingDto } from '@/src/modules/listing/dto'
 import { CreateNotificationDto } from '@/src/modules/notification/dto'
 import { NotificationService } from '@/src/modules/notification/notification.service'
-import { ListingStatusType, PropertyType, User } from '@prisma/generated/client'
+import { LISTING_NOT_FOUND, TOTP_INVALID_PIN } from '@/src/shared/messages'
+import {
+  ListingStatusType,
+  NotificationType,
+  PropertyType,
+  User,
+} from '@prisma/generated/client'
 
 @Injectable()
 export class ListingService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly notificationService: NotificationService,
+    private readonly configService: ConfigService,
   ) {}
 
   async create(host: User, dto: CreateListingDto) {
@@ -122,5 +136,55 @@ export class ListingService {
         },
       },
     })
+  }
+
+  async delete(host: User, dto: DeleteListingDto) {
+    const { pin, id } = dto
+
+    const isExist = await this.prismaService.listing.findUnique({
+      where: {
+        id,
+        hostId: host.id,
+      },
+    })
+    if (!isExist) {
+      throw new NotFoundException(LISTING_NOT_FOUND)
+    }
+
+    if (host.isTotpEnabled) {
+      if (!pin) {
+        return { message: ['Incorrect PIN'] }
+      }
+
+      const totp = new TOTP({
+        issuer: this.configService.getOrThrow<string>('TOTP_ISSUER'),
+        digits: 6,
+        label: `${host.email}`,
+        algorithm: 'SHA1',
+        secret: host.totpSecret,
+      })
+
+      const delta = totp.validate({ token: pin })
+      if (delta === null) {
+        throw new BadRequestException(TOTP_INVALID_PIN)
+      }
+    }
+
+    const notification: CreateNotificationDto = {
+      notificationType: NotificationType.SUCCESS,
+      title: 'You listing has been deleted',
+      description: 'Your listing successfully deleted',
+    }
+
+    await this.notificationService.createNotification(notification, host.id)
+
+    await this.prismaService.listing.delete({
+      where: {
+        id,
+        hostId: host.id,
+      },
+    })
+
+    return true
   }
 }

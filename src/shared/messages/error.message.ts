@@ -16,3 +16,5 @@ export const TOTP_INVALID_PIN = 'Invalid pin'
 export const HOST_CONFLICT = 'Request already exists, please wait'
 export const HOST_APPROVE_CONFLICT = 'User already approved'
 export const HOST_REJECT_CONFLICT = 'User already rejected'
+
+export const LISTING_NOT_FOUND = 'Listing not found'

@@ -1,5 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
-import { CreateListingDto } from '@/src/modules/listing/dto'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common'
+import { CreateListingDto, DeleteListingDto } from '@/src/modules/listing/dto'
 import { Authorization, Authorized } from '@/src/shared/decorators'
 import { PropertyType, User } from '@prisma/generated/client'
 
@@ -29,5 +37,11 @@ export class ListingController {
   @Get('current/:id')
   async getOne(@Param('id') id: string) {
     return this.listingService.getOne(id)
+  }
+
+  @Delete('delete')
+  @Authorization('HOST')
+  async delete(@Authorized() host: User, @Body() dto: DeleteListingDto) {
+    return this.listingService.delete(host, dto)
   }
 }
