@@ -16,6 +16,7 @@ import { RedisService } from '@/src/core/redis/redis.service'
 import { LoginUserDto } from '@/src/modules/auth/session/dto'
 import {
   ACCESS_DENIED,
+  PIN_INCORRECT,
   SESSION_NOT_FOUND,
   SESSION_NOT_FOUND_USER,
   SESSION_REMOVE_CONFLICT,
@@ -93,7 +94,7 @@ export class SessionService {
 
     if (user.isTotpEnabled) {
       if (!pin) {
-        return { message: 'Incorrect PIN' }
+        return { message: [PIN_INCORRECT] }
       }
 
       const totp = new TOTP({

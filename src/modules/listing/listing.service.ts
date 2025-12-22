@@ -10,7 +10,11 @@ import { PrismaService } from '@/src/core/prisma/prisma.service'
 import { CreateListingDto, DeleteListingDto } from '@/src/modules/listing/dto'
 import { CreateNotificationDto } from '@/src/modules/notification/dto'
 import { NotificationService } from '@/src/modules/notification/notification.service'
-import { LISTING_NOT_FOUND, TOTP_INVALID_PIN } from '@/src/shared/messages'
+import {
+  LISTING_NOT_FOUND,
+  PIN_INCORRECT,
+  TOTP_INVALID_PIN,
+} from '@/src/shared/messages'
 import {
   ListingStatusType,
   NotificationType,
@@ -153,7 +157,7 @@ export class ListingService {
 
     if (host.isTotpEnabled) {
       if (!pin) {
-        return { message: ['Incorrect PIN'] }
+        return { message: [PIN_INCORRECT] }
       }
 
       const totp = new TOTP({
