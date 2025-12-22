@@ -37,6 +37,9 @@ model ProfileInfo {
   aboutMe   String?
   birthday  String
 
+  liveIn    String? @map("live_in")
+  workingIn String? @map("working_in")
+
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique @map("user_id")
 

@@ -7,6 +7,7 @@ import { S3Module } from '@/src/modules/libs/s3/s3.module'
 import { ListingModule } from '@/src/modules/listing/listing.module'
 import { NotificationModule } from '@/src/modules/notification/notification.module'
 import { RoleModule } from '@/src/modules/permission/role/role.module'
+import { ProfileModule } from '@/src/modules/profile/profile.module'
 import { HostVerificationModule } from '@/src/modules/verification/host-verification/host-verification.module'
 import { ListingVerificationModule } from '@/src/modules/verification/listing-verification/listing-verification.module'
 
@@ -24,6 +25,7 @@ import { RedisModule } from './redis/redis.module'
     SessionModule,
     TotpModule,
     RoleModule,
+    ProfileModule,
     HostVerificationModule,
     ListingModule,
     ListingVerificationModule,
