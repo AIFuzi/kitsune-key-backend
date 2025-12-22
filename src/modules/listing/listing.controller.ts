@@ -4,10 +4,15 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common'
-import { CreateListingDto, DeleteListingDto } from '@/src/modules/listing/dto'
+import {
+  CreateListingDto,
+  DeleteListingDto,
+  UpdateListingDto,
+} from '@/src/modules/listing/dto'
 import { Authorization, Authorized } from '@/src/shared/decorators'
 import { PropertyType, User } from '@prisma/generated/client'
 
@@ -39,9 +44,26 @@ export class ListingController {
     return this.listingService.getOne(id)
   }
 
+  @Get('by-host/:id')
+  async getByHost(@Param('id') id: string) {
+    return this.listingService.getHostListings(id)
+  }
+
+  @Get('by-me')
+  @Authorization('HOST')
+  async getMyListings(@Authorized('id') hostId: string) {
+    return this.listingService.getMyListings(hostId)
+  }
+
   @Delete('delete')
   @Authorization('HOST')
   async delete(@Authorized() host: User, @Body() dto: DeleteListingDto) {
     return this.listingService.delete(host, dto)
+  }
+
+  @Patch('update')
+  @Authorization('HOST')
+  async update(@Authorized() host: User, @Body() dto: UpdateListingDto) {
+    return this.listingService.update(dto, host)
   }
 }

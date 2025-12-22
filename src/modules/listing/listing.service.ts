@@ -7,7 +7,11 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PrismaService } from '@/src/core/prisma/prisma.service'
-import { CreateListingDto, DeleteListingDto } from '@/src/modules/listing/dto'
+import {
+  CreateListingDto,
+  DeleteListingDto,
+  UpdateListingDto,
+} from '@/src/modules/listing/dto'
 import { CreateNotificationDto } from '@/src/modules/notification/dto'
 import { NotificationService } from '@/src/modules/notification/notification.service'
 import {
@@ -190,5 +194,68 @@ export class ListingService {
     })
 
     return true
+  }
+
+  async update(dto: UpdateListingDto, host: User) {
+    const {
+      id,
+      propertyType,
+      description,
+      discountPercent,
+      bedCount,
+      roomCount,
+      bathCount,
+      title,
+      price,
+    } = dto
+
+    const isExist = await this.prismaService.listing.findUnique({
+      where: {
+        id,
+        hostId: host.id,
+      },
+    })
+    if (!isExist) {
+      throw new NotFoundException(LISTING_NOT_FOUND)
+    }
+
+    return this.prismaService.listing.update({
+      where: {
+        id,
+      },
+      data: {
+        propertyType,
+        description,
+        discountPercent,
+        bedCount,
+        roomCount,
+        bathCount,
+        title,
+        price,
+      },
+    })
+  }
+
+  async getHostListings(hostId: string) {
+    return this.prismaService.listing.findMany({
+      where: {
+        hostId,
+        listingStatus: ListingStatusType.PUBLISHED,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+  }
+
+  async getMyListings(hostId: string) {
+    return this.prismaService.listing.findMany({
+      where: {
+        hostId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
   }
 }

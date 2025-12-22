@@ -4,34 +4,29 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   Min,
 } from 'class-validator'
 
-export class CreateListingDto {
+import { ListingStatusType, PropertyType } from '@prisma/generated/enums'
+
+export class UpdateListingDto {
   @IsNotEmpty()
+  @IsUUID()
+  id: string
+
   @IsString()
+  @IsOptional()
   title: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  country: string
-
-  @IsNotEmpty()
-  @IsString()
-  city: string
-
-  @IsNotEmpty()
-  @IsNumber()
-  lat: number
-
-  @IsNotEmpty()
-  @IsNumber()
-  lng: number
+  propertyType: PropertyType
 
   @IsInt()
   @IsOptional()
@@ -51,8 +46,12 @@ export class CreateListingDto {
   @Max(10)
   roomCount: number
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   @Min(1)
   price: number
+
+  @IsOptional()
+  @IsNumber()
+  discountPercent: number
 }
