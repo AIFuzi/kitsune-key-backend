@@ -158,8 +158,8 @@ export class ListingService {
           select: {
             profileInfo: {
               select: {
+                userId: true,
                 name: true,
-                aboutMe: true,
                 avatarUrl: true,
                 birthday: true,
               },
