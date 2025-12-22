@@ -1,5 +1,6 @@
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import {
+  IsArray,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -62,4 +63,9 @@ export class CreateListingDto {
   @Min(1)
   @Type(() => Number)
   price: number
+
+  @IsOptional()
+  @IsArray()
+  @Transform(({ value }) => JSON.parse(value), { toClassOnly: true })
+  amenities: string[]
 }

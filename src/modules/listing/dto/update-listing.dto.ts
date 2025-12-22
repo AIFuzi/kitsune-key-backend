@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -9,7 +10,7 @@ import {
   Min,
 } from 'class-validator'
 
-import { ListingStatusType, PropertyType } from '@prisma/generated/enums'
+import { PropertyType } from '@prisma/generated/enums'
 
 export class UpdateListingDto {
   @IsNotEmpty()
@@ -58,4 +59,8 @@ export class UpdateListingDto {
   @IsString()
   @IsOptional()
   pin?: string
+
+  @IsOptional()
+  @IsArray()
+  amenities: string[]
 }

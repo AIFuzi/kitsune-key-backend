@@ -209,6 +209,9 @@ export class ListingService {
     }
 
     await this.notificationService.createNotification(notification, host.id)
+    for (const i in isExist.imageUrl) {
+      await this.s3Service.remove(isExist.imageUrl[i])
+    }
 
     await this.prismaService.listing.delete({
       where: {
@@ -251,6 +254,7 @@ export class ListingService {
       bathCount,
       title,
       price,
+      amenities,
     } = dto
 
     const isExist = await this.prismaService.listing.findUnique({
@@ -276,6 +280,7 @@ export class ListingService {
         bathCount,
         title,
         price,
+        amenities,
       },
     })
   }
