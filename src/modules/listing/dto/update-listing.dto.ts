@@ -54,4 +54,8 @@ export class UpdateListingDto {
   @IsOptional()
   @IsNumber()
   discountPercent: number
+
+  @IsString()
+  @IsOptional()
+  pin?: string
 }

@@ -197,6 +197,26 @@ export class ListingService {
   }
 
   async update(dto: UpdateListingDto, host: User) {
+    if (host.isTotpEnabled) {
+      const { pin } = dto
+      if (!pin) {
+        return { message: [PIN_INCORRECT] }
+      }
+
+      const totp = new TOTP({
+        issuer: this.configService.getOrThrow<string>('TOTP_ISSUER'),
+        digits: 6,
+        label: `${host.email}`,
+        algorithm: 'SHA1',
+        secret: host.totpSecret,
+      })
+
+      const delta = totp.validate({ token: pin })
+      if (delta === null) {
+        throw new BadRequestException(TOTP_INVALID_PIN)
+      }
+    }
+
     const {
       id,
       propertyType,
