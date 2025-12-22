@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer'
 import {
   IsInt,
   IsNotEmpty,
@@ -27,32 +28,38 @@ export class CreateListingDto {
 
   @IsNotEmpty()
   @IsNumber()
+  @Type(() => Number)
   lat: number
 
   @IsNotEmpty()
   @IsNumber()
+  @Type(() => Number)
   lng: number
 
   @IsInt()
   @IsOptional()
   @Min(1)
   @Max(10)
+  @Type(() => Number)
   bedCount: number
 
   @IsInt()
   @IsOptional()
   @Min(1)
   @Max(10)
+  @Type(() => Number)
   bathCount: number
 
   @IsInt()
   @IsOptional()
   @Min(1)
   @Max(10)
+  @Type(() => Number)
   roomCount: number
 
   @IsNotEmpty()
   @IsNumber()
   @Min(1)
+  @Type(() => Number)
   price: number
 }

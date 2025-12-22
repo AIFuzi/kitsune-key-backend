@@ -1,4 +1,6 @@
 import { TOTP } from 'otpauth'
+import * as sharp from 'sharp'
+import { v4 } from 'uuid'
 
 import {
   BadRequestException,
@@ -7,6 +9,7 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PrismaService } from '@/src/core/prisma/prisma.service'
+import { S3Service } from '@/src/modules/libs/s3/s3.service'
 import {
   CreateListingDto,
   DeleteListingDto,
@@ -32,9 +35,29 @@ export class ListingService {
     private readonly prismaService: PrismaService,
     private readonly notificationService: NotificationService,
     private readonly configService: ConfigService,
+    private readonly s3Service: S3Service,
   ) {}
 
-  async create(host: User, dto: CreateListingDto) {
+  async create(
+    host: User,
+    dto: CreateListingDto,
+    files: Express.Multer.File[],
+  ) {
+    const images = []
+
+    for (const i in files) {
+      const processedBuffer = await sharp(files[i].buffer).avif().toBuffer()
+
+      const newFileName = `${v4()}.avif`
+
+      await this.s3Service.upload(
+        processedBuffer,
+        newFileName,
+        files[i].mimetype,
+      )
+      images.push(newFileName)
+    }
+
     const notification: CreateNotificationDto = {
       title: 'Your create new listing',
       description: 'The listing will be available after verification',
@@ -45,6 +68,7 @@ export class ListingService {
     return this.prismaService.listing.create({
       data: {
         ...dto,
+        imageUrl: images,
         hostId: host.id,
         verification: {
           create: {

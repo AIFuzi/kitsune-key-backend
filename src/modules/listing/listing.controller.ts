@@ -7,7 +7,10 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common'
+import { FilesInterceptor } from '@nestjs/platform-express'
 import {
   CreateListingDto,
   DeleteListingDto,
@@ -24,8 +27,13 @@ export class ListingController {
 
   @Post('create')
   @Authorization('HOST')
-  async create(@Authorized() host: User, @Body() dto: CreateListingDto) {
-    return this.listingService.create(host, dto)
+  @UseInterceptors(FilesInterceptor('imageUrl'))
+  async create(
+    @Authorized() host: User,
+    @Body() dto: CreateListingDto,
+    @UploadedFiles() imageUrl: Express.Multer.File[],
+  ) {
+    return this.listingService.create(host, dto, imageUrl)
   }
 
   @Get('all/:country')

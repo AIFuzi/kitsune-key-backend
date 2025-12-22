@@ -15,7 +15,7 @@ async function bootstrap() {
   const redis = app.get(RedisService)
 
   app.setGlobalPrefix(config.getOrThrow<string>('PREFIX'))
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe({ transform: true }))
 
   app.use(
     session({
