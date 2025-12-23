@@ -21,6 +21,7 @@ model User {
   notification     Notification[]
   hostVefification HostVefification?
   listing          Listing[]
+  ListingSave      ListingFavorite[]
 
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
@@ -125,6 +126,7 @@ model Listing {
 
   // Comments
   // Rating
+  ListingSave ListingFavorite[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -132,6 +134,21 @@ model Listing {
   @@index([city, country])
   @@index([listingStatus])
   @@map("listings")
+}
+
+model ListingFavorite {
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId String  @map("listing_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("listing_favorites")
 }
 
 model ListingVerification {

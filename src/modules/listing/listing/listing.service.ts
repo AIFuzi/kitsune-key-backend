@@ -14,7 +14,7 @@ import {
   CreateListingDto,
   DeleteListingDto,
   UpdateListingDto,
-} from '@/src/modules/listing/dto'
+} from '@/src/modules/listing/listing/dto'
 import { CreateNotificationDto } from '@/src/modules/notification/dto'
 import { NotificationService } from '@/src/modules/notification/notification.service'
 import {

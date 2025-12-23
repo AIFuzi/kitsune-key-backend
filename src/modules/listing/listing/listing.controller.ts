@@ -15,7 +15,7 @@ import {
   CreateListingDto,
   DeleteListingDto,
   UpdateListingDto,
-} from '@/src/modules/listing/dto'
+} from '@/src/modules/listing/listing/dto'
 import { Authorization, Authorized } from '@/src/shared/decorators'
 import { PropertyType, User } from '@prisma/generated/client'
 
