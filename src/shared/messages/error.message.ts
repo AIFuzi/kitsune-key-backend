@@ -18,3 +18,7 @@ export const HOST_APPROVE_CONFLICT = 'User already approved'
 export const HOST_REJECT_CONFLICT = 'User already rejected'
 
 export const LISTING_NOT_FOUND = 'Listing not found'
+
+export const EMAIL_EQUAL = 'You cant change the email to the same one.'
+export const EMAIL_ALREADY_EXISTS = 'Email already exists'
+export const PASSWORD_SAME_ONE = 'You cant change the password to the same one.'
