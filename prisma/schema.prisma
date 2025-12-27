@@ -16,16 +16,17 @@ model User {
   isTotpEnabled Boolean @default(false) @map("is_totp_enabled")
   totpSecret    String? @map("totp_secret")
 
-  profileInfo      ProfileInfo?
-  userRole         UserRole[]
-  notification     Notification[]
-  hostVefification HostVefification?
-  listing          Listing[]
-  ListingSave      ListingFavorite[]
-
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
+  profileInfo        ProfileInfo?
+  userRole           UserRole[]
+  notification       Notification[]
+  hostVefification   HostVefification?
+  listing            Listing[]
+  ListingSave        ListingFavorite[]
+  bookings           Booking[]
   hostVefificationId String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -127,6 +128,7 @@ model Listing {
   // Comments
   // Rating
   ListingSave ListingFavorite[]
+  bookings    Booking[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -166,6 +168,28 @@ model ListingVerification {
   @@map("listing_verifications")
 }
 
+model Booking {
+  id String @id @default(uuid())
+
+  startDate DateTime @map("start_date")
+  endDate   DateTime @map("end_date")
+
+  totalPrice Int @map("total_price")
+
+  status BookingStatus @default(PENDING)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId String  @map("listing_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("bookings")
+}
+
 enum UserRoleType {
   USER
   HOST
@@ -197,4 +221,12 @@ enum PropertyType {
   HOUSE
   HOTEL
   ROOM
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  REJECT
+  FINISHED
 }
