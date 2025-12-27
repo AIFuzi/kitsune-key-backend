@@ -22,3 +22,5 @@ export const LISTING_NOT_FOUND = 'Listing not found'
 export const EMAIL_EQUAL = 'You cant change the email to the same one.'
 export const EMAIL_ALREADY_EXISTS = 'Email already exists'
 export const PASSWORD_SAME_ONE = 'You cant change the password to the same one.'
+
+export const BOOKING_ALREADY_DATE_EXISTS = 'Booking already date exists'

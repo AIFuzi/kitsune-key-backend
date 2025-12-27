@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import { AccountModule } from '@/src/modules/auth/account/account.module'
 import { SessionModule } from '@/src/modules/auth/session/session.module'
 import { TotpModule } from '@/src/modules/auth/totp/totp.module'
+import { BookingModule } from '@/src/modules/booking/booking.module'
 import { S3Module } from '@/src/modules/libs/s3/s3.module'
 import { FavoriteModule } from '@/src/modules/listing/favorite/favorite.module'
 import { ListingModule } from '@/src/modules/listing/listing/listing.module'
@@ -31,6 +32,7 @@ import { RedisModule } from './redis/redis.module'
     ListingModule,
     FavoriteModule,
     ListingVerificationModule,
+    BookingModule,
   ],
 })
 export class CoreModule {}
